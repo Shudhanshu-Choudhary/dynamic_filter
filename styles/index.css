@@ -1,0 +1,20 @@
+#__next > div > div > div > div.list-conntainer > ul > div:nth-child(2) > div{
+    min-width: 110px !important;
+}
+
+#__next > div > div > div > div.list-conntainer > ul > div:nth-child(1) > div{
+    min-width: 110px !important;
+}
+
+#__next > div > div > div > div.list-conntainer > ul > div.mb-5.show.dropdown > div > a > div > span.ml-5{
+    margin-left: 2rem;
+}
+
+#__next > div > div > div > div.list-conntainer > ul > .mb-5.show.dropdown > div > a {
+    background-color: #e9ecef;
+}
+
+#__next > div > div > div > div.list-conntainer > ul {
+    margin-top: 2.5rem;
+}
+
