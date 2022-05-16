@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -8,8 +8,6 @@ import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import CardContainer from '../components/cardcontainer';
 import axios from 'axios';
 const drawerWidth = 240;
@@ -81,21 +79,35 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function MiniDrawer() {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const [attributes, setAttributes] = React.useState([]);
   const [filterArray, setFilterArray] = React.useState({
      Size: [],
      Color: []
   });
-  
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+
   
   const clickHandler = (n, v)  => {
-    setFilterArray({...filterArray, [n]:v})
+    let arr = filterArray[n];
+
+    if(!arr.includes(v)){
+      arr.push(v)
+    } else {
+      arr = arr.filter(i => i !== v)
+    }
+    
+    setFilterArray({...filterArray , [n]: arr})
+
+    //console.log(filterArray);
+
+    // if(n === 'Size') {
+    //     setFilterArray({...filterArray, [n]:[...filterArray.Size,  v]})
+    // } else {
+    //     setFilterArray({...filterArray, [n]:[...filterArray.Color,  v]})
+    // }
+    // console.log(filterArray);
   }
+
 
 
   React.useEffect(() => {
@@ -109,18 +121,6 @@ export default function MiniDrawer() {
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography variant="h6" noWrap component="div">
             Dynamic Filter
           </Typography>
@@ -143,12 +143,12 @@ export default function MiniDrawer() {
                                 {
                                     attribute.att_value.map((v, index) => {
                                        return (
-                                        <div className='mb-1' key={index}>
-                                            <div className="form-check">
-                                                <input className="form-check-input" onClick={() => clickHandler(attribute.att_id, v)} type="checkbox" value="" id="flexCheckDefault" />
+    
+                                            <div className="form-check mb-1" key={index}>
+                                                <input className="form-check-input" onClick={() => clickHandler(attribute.att_id, v)} type="checkbox"  />
                                                 <label className="form-check-label" htmlFor="flexCheckDefault">{v}</label>
                                             </div>
-                                        </div> 
+                                    
                                        )}
                                     )
                                 }
