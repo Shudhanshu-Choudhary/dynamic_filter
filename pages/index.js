@@ -12,6 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import CardContainer from '../components/cardcontainer';
 import axios from 'axios';
+import { Button } from 'react-bootstrap';
 const drawerWidth = 240;
 
 
@@ -34,7 +35,7 @@ const closedMixin = (theme) => ({
   [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
-});
+}); 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -82,25 +83,62 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export default function MiniDrawer() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const [attributes, setAttributes] = React.useState([]);
+  const [categories, setCategories] = React.useState([]);
+  const [category, setCategory] = React.useState('');
   const [filterArray, setFilterArray] = React.useState({
-     Size: [],
-     Color: []
-  });
+    Size: [],
+    Color: [],
+    Brand: [],
+    Seller: [],
+    Language: [],
+    Author: []
+   });
   
   const handleDrawerOpen = () => {
     setOpen(true);
   };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  }
   
   const clickHandler = (n, v)  => {
-    setFilterArray({...filterArray, [n]:v})
+   
+    let arr = filterArray[n];
+    console.log(arr);
+    if(!arr.includes(v)) {
+      arr.push(v)
+    } else {
+      arr.filter( a => a !== v)
+    }
+    setFilterArray({...filterArray, [n]: arr})
+  }
+
+  const categorieHandler = async (e) => {
+    const param = e.target.getAttribute("data");
+    const cate = e.target.getAttribute('category');
+    let Attributes = [];
+    
+    await axios.get('http://localhost:3004/attributes')
+            .then(res => Attributes = res.data)
+            .catch(er => console.log(er))
+
+    const ids = param.split(",");
+    const attr_filter = [...Attributes]
+
+    const final = attr_filter.filter(attribute => attribute.id == ids[0] || attribute.id == ids[1] );
+    
+    handleDrawerOpen();
+    setAttributes(final);
+    setCategory(cate)
   }
 
 
   React.useEffect(() => {
-      axios.get('http://localhost:3004/attributes')
-      .then(res => setAttributes(res.data))
+      axios.get('http://localhost:3004/categories')
+      .then(res => setCategories(res.data))
       .catch(e => console.log(e))
   },[])
 
@@ -121,9 +159,19 @@ export default function MiniDrawer() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Dynamic Filter
-          </Typography>
+          <div variant="h6" component="div" className='d-flex'>
+              {
+                categories.length > 0 && (
+                  categories.map(categorie => {
+                    return (
+                      <div className='category-btn-container m-2' key={categorie.id}>
+                          <Button data = {categorie.att_id} category = {categorie.name} onClick={categorieHandler}>{categorie.name}</Button> 
+                      </div>
+                    )
+                  })
+                )
+              }
+          </div>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -161,7 +209,7 @@ export default function MiniDrawer() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <CardContainer filterArray={filterArray} />
+        <CardContainer filterArray={filterArray} category={category}/>
       </Box>
     </Box>
   );

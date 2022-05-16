@@ -7,33 +7,41 @@ import axios from 'axios';
 import "../styles/Home.module.css"
 import styles from './card.module.css'
 
-export default function CardContainer({filterArray}) {
+export default function CardContainer({filterArray, category}) {
+    const [initial, setInitial] = React.useState([])
     const [products, setProducts] = React.useState([]);
     const arr = filterArray;
-    console.log(arr === true);
-    
-    React.useEffect(() => {
-        axios.get('http://localhost:3004/products?_limit=9')
-        .then(res => setProducts(res.data))
-        .catch(e => console.log(e))
-    },[]);
 
     React.useEffect(() => {
-        if(arr.Size.length > 0 && arr.Color.length === 0){
-          axios.get(`http://localhost:3004/products?size=${arr.Size}&_limit=9`)
-            .then(res => setProducts(res.data))
-            .catch(e => console.log(e))
-        } else if(arr.Color.length > 0 && arr.Size.length === 0) {
-            axios.get(`http://localhost:3004/products?color=${arr.Color}&_limit=9`)
-            .then(res => setProducts(res.data))
-            .catch(e => console.log(e))
-        } else if(arr.Color.length > 0 && arr.Size.length > 0) {
-            axios.get(`http://localhost:3004/products?size=${arr.Size}&color=${arr.Color}&_limit=9`)
-            .then(res => setProducts(res.data))
-            .catch(e => console.log(e))
+        if(!category){
+            axios.get('http://localhost:3004/products')
+                .then(res => {
+                    setProducts(res.data)
+                    setInitial(res.data)
+                })
+                .catch(e => console.log(e))
+        } else {
+            axios.get(`http://localhost:3004/products?categorie=${category}`)
+                .then(res => setProducts(res.data))
+                .catch(e => console.log(e))
         }
+    },[category]);
 
-    },[arr])
+    React.useEffect(() => {
+        let Size = filterArray.Size;
+        let Color = filterArray.Color;
+        let Brand = filterArray.Brand;
+        let Seller = filterArray.Seller;
+        let Language = filterArray.Language;
+        let Author = filterArray.Author;
+
+        let filteredArray = [...products];
+        if(Size.length > 0) {
+
+        }
+    })
+
+    
 
   if(products.length === 0){
     return <div>Loading...</div>
@@ -47,13 +55,18 @@ export default function CardContainer({filterArray}) {
                     <CardActionArea>
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">
-                                {product.products_name}
+                                {product.name}
                             </Typography>
                             <Typography gutterBottom variant="h5" component="div">
-                                {product.size}
+                                {product.categorie}
                             </Typography>
                             <Typography gutterBottom variant="h5" component="div">
-                                {product.color}
+                                {product.attributes.map(attri => { 
+                                    return(
+                                        <div key={attri.id}>{`${attri.id}: ${attri.value} `}</div>
+                                    )
+                                    })
+                                }
                             </Typography>
                         </CardContent>
                     </CardActionArea>
