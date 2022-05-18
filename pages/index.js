@@ -84,17 +84,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function MiniDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [checked, setChecked] = React.useState(false)
   const [attributes, setAttributes] = React.useState([]);
   const [categories, setCategories] = React.useState([]);
   const [category, setCategory] = React.useState('');
-  const [filterArray, setFilterArray] = React.useState({
-    Size: [],
-    Color: [],
-    Brand: [],
-    Seller: [],
-    Language: [],
-    Author: []
-   });
+  const [filterArray, setFilterArray] = React.useState([]);
   
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -104,19 +98,72 @@ export default function MiniDrawer() {
     setOpen(false);
   }
   
-  const clickHandler = (n, v)  => {
-   
-    let arr = filterArray[n];
-    console.log(arr);
-    if(!arr.includes(v)) {
-      arr.push(v)
-    } else {
-      arr.filter( a => a !== v)
+  const clickHandler = (att_id, att_value)  => {
+    
+    let temp_Farray = [...filterArray]
+
+    if(filterArray.length === 0) {
+      setFilterArray([{id: att_id, value: [att_value]}])
     }
-    setFilterArray({...filterArray, [n]: arr})
+    else {
+        const index = temp_Farray.findIndex(obj => obj.id === att_id);
+
+        if(index < 0) {
+          temp_Farray.push({id: att_id, value: [att_value]})
+        }
+        else {
+           if(!temp_Farray[index].value.includes(att_value)){
+                
+                      temp_Farray[index] = {id: att_id, value: [...temp_Farray[index].value, att_value]}
+                    }
+                    else {
+                      
+                      console.log(index);
+                      const arr = temp_Farray[index].value.filter(V => V !== att_value)
+                      if(arr.length === 0){
+                        temp_Farray.splice(index, 1)
+                      }else {
+                        temp_Farray[index] = {id: att_id, value: arr}
+                      }
+                      
+                    }
+            }
+            setFilterArray(temp_Farray)
+            console.log(filterArray);
+
+    }
+    // else {
+    //   filterArray.map((fa, index) => {
+    //     let arr = fa.value
+
+    //     if(fa.id === att_id){
+
+    //         if(!fa.value.includes(att_value)){
+    //           arr = [...arr, att_value]
+    //           temp_Farray[index] = {id: att_id, value: arr}
+    //         }
+    //         else {
+    //           console.log(index);
+    //           arr = fa.value.filter(V => V === att_value)
+    //           if(arr.length == 0){
+    //             temp_Farray.splice(index, 1)
+    //           }
+    //           temp_Farray[index] = {id: att_id, value: arr}
+    //         }
+
+    //     } 
+    //     else {
+    //         temp_Farray[++index] = {id: att_id, value: [att_value]}
+    //     }
+    //   })
+      // setFilterArray(temp_Farray);
+    //}
+    // console.log(event);
+    // setChecked(event.target.checked)
   }
 
   const categorieHandler = async (e) => {
+
     const param = e.target.getAttribute("data");
     const cate = e.target.getAttribute('category');
     let Attributes = [];
@@ -133,6 +180,8 @@ export default function MiniDrawer() {
     handleDrawerOpen();
     setAttributes(final);
     setCategory(cate)
+    setFilterArray([])
+    setChecked(false)
   }
 
 
@@ -193,8 +242,8 @@ export default function MiniDrawer() {
                                        return (
                                         <div className='mb-1' key={index}>
                                             <div className="form-check">
-                                                <input className="form-check-input" onClick={() => clickHandler(attribute.att_id, v)} type="checkbox" value="" id="flexCheckDefault" />
-                                                <label className="form-check-label" htmlFor="flexCheckDefault">{v}</label>
+                                                <input className="form-check-input" onChange={() => clickHandler(attribute.att_id, v)} type="checkbox"/>
+                                                <label className="form-check-label">{v}</label>
                                             </div>
                                         </div> 
                                        )}
