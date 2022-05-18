@@ -11,8 +11,6 @@ export default function CardContainer({filterArray, category}) {
 
     const [initial, setInitial] = React.useState([])
     const [products, setProducts] = React.useState([]);
-    console.log(filterArray);
-    const arr = filterArray;
 
     React.useEffect(() => {
         if(!category){
@@ -32,80 +30,42 @@ export default function CardContainer({filterArray, category}) {
         }
     },[category]);
 
+    React.useEffect(() => {
+      debugger
+      let F_array = [...filterArray]
+      let newProdList = []
+      let temp_prodList = []
+      let temp_prodList_2 = []
+      let i = 0;
+      console.log(products)
 
-    
+      F_array.map(filterobj => {
+        
+        if(i === 0){
+           temp_prodList = [...products]
+        } else {
+           temp_prodList = [...temp_prodList_2]
+        }
 
-    // React.useEffect(() => {
-    //     let Size = filterArray.Size;
-    //     let Color = filterArray.Color;
-    //     let Brand = filterArray.Brand;
-    //     let Seller = filterArray.Seller;
-    //     let Language = filterArray.Language;
-    //     let Author = filterArray.Author;
-    //     let filteredArray = [...products];
-    //     let arra = []
+        temp_prodList.map(prodObj => {
 
-    //     products.map(product => {
-            
-    //         if(Size.length > 0) {
+            prodObj.attributes.map(attObj => {
+                if(attObj.id === filterobj.id) {
+                   if(filterobj.value.includes(attObj.value) && !newProdList.includes(prodObj)){
+                        newProdList.push(prodObj)
+                   }
+                }
+            })
+            temp_prodList_2 = newProdList;
+        })
 
-    //             filteredArray = Size.map(S => {
+        console.log(newProdList);
+        setInitial(newProdList);
+        ++i
+        temp_prodList = []
+      })
 
-    //                 product.attributes.map(att => {
-    //                    if(att.id === 'Size'){
-    //                        if(att.value === S){
-    //                            arra = [...arra, product]
-    //                        } 
-    //                    }
-    //                 })
-    //                 console.log(arra)
-    //                 return arra
-    //             })
-    //         }
-    //         if(Color.length > 0){
-
-    //             filteredArray = Color.map(C => {
-    //                 product.attributes.map(att => {
-    //                     if(att.id === 'Color'){
-    //                         if(att.value === C){
-    //                             if(!arra.includes(product))
-    //                                arra = [...arra, product]
-    //                         } 
-    //                     }
-    //                  })
-    //                  console.log(arra)
-    //                  return arra
-    //             })
-    //         }
-    //     })
-    //     // if(Size.length > 0) {
-    //     //     filteredArray = Size.map(s => {
-    //     //         let P = [...products];
-    //     //         let nw = P.filter(prod => {
-    //     //             prod.attributes.map(att => {
-    //     //                 if(att.id === 'Size'){
-    //     //                     if(att.value === s){
-    //     //                         return true;
-    //     //                     }
-    //     //                 }
-    //     //             })
-    //     //         });
-    //     //         console.log(nw);
-    //     //     })
-    //     // }
-    //     // if(Color.length > 0){
-    //     //     const ar = filteredArray.flat(1);
-    //     //     filteredArray = Color.map(c => {
-    //     //         let P = ar.slice(0);
-    //     //         let nw = P.filter(prod => prod.color === c)
-    //     //         let wn = [...nw]
-    //     //         return wn
-    //     //     })
-    //     // }
-    //     // const ra = filteredArray.flat(1);
-    //     // setInitial(ra)
-    // }, [arr])
-
+    },[filterArray])
     
 
   if(products.length === 0){
@@ -114,7 +74,7 @@ export default function CardContainer({filterArray, category}) {
 
   return (
     <div className={styles.d}>
-      { products.map(product => {
+      { initial.map(product => {
           return (
                 <Card sx={{ maxWidth: 345 }} key={product.id}> 
                     <CardActionArea>
