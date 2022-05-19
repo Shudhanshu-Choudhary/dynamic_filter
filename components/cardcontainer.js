@@ -11,8 +11,11 @@ export default function CardContainer({filterArray, category}) {
 
     const [initial, setInitial] = React.useState([])
     const [products, setProducts] = React.useState([]);
+    console.log(filterArray);
 
     React.useEffect(() => {
+
+        // if category is present display only the products with same category
         if(!category){
             axios.get('http://localhost:3004/products')
                 .then(res => {
@@ -30,8 +33,21 @@ export default function CardContainer({filterArray, category}) {
         }
     },[category]);
 
+    // if all the filters are unticks and category is present again display the all products of same category
     React.useEffect(() => {
-      debugger
+        if(filterArray.length === 0 && category) {
+            axios.get(`http://localhost:3004/products?categorie=${category}`)
+                .then(res => {
+                    setProducts(res.data)
+                    setInitial(res.data)
+                })
+                .catch(e => console.log(e))
+        }
+    },[filterArray])
+
+    // filter logic are written here
+    
+    React.useEffect(() => {
       let F_array = [...filterArray]
       let newProdList = []
       let temp_prodList = []
@@ -55,14 +71,16 @@ export default function CardContainer({filterArray, category}) {
                         newProdList.push(prodObj)
                    }
                 }
-            })
-            temp_prodList_2 = newProdList;
+            }) 
+            
         })
-
+        
         console.log(newProdList);
         setInitial(newProdList);
         ++i
         temp_prodList = []
+        temp_prodList_2 = newProdList;
+        newProdList=[]
       })
 
     },[filterArray])
