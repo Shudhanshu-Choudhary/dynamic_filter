@@ -13,6 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CardContainer from '../components/cardcontainer';
 import axios from 'axios';
 import { Button } from 'react-bootstrap';
+import $ from "jquery";
 const drawerWidth = 240;
 
 
@@ -132,35 +133,19 @@ export default function MiniDrawer() {
             console.log(filterArray);
 
     }
-    // else {
-    //   filterArray.map((fa, index) => {
-    //     let arr = fa.value
-
-    //     if(fa.id === att_id){
-
-    //         if(!fa.value.includes(att_value)){
-    //           arr = [...arr, att_value]
-    //           temp_Farray[index] = {id: att_id, value: arr}
-    //         }
-    //         else {
-    //           console.log(index);
-    //           arr = fa.value.filter(V => V === att_value)
-    //           if(arr.length == 0){
-    //             temp_Farray.splice(index, 1)
-    //           }
-    //           temp_Farray[index] = {id: att_id, value: arr}
-    //         }
-
-    //     } 
-    //     else {
-    //         temp_Farray[++index] = {id: att_id, value: [att_value]}
-    //     }
-    //   })
-      // setFilterArray(temp_Farray);
-    //}
-    // console.log(event);
-    // setChecked(event.target.checked)
+    
+    // 
+    $("category-btn").on("click", function(){
+      if(this.checked){
+        $("#form-input").prop("checked", true)
+      } else {
+        $("#form-input").prop("checked", false)
+      }
+    })
   }
+  
+    
+
 
   const categorieHandler = async (e) => {
 
@@ -214,7 +199,7 @@ export default function MiniDrawer() {
                   categories.map(categorie => {
                     return (
                       <div className='category-btn-container m-2' key={categorie.id}>
-                          <Button data = {categorie.att_id} category = {categorie.name} onClick={categorieHandler}>{categorie.name}</Button> 
+                          <Button data = {categorie.att_id} id="category-btn" category = {categorie.name} onClick={categorieHandler}>{categorie.name}</Button> 
                       </div>
                     )
                   })
@@ -242,7 +227,7 @@ export default function MiniDrawer() {
                                        return (
                                         <div className='mb-1' key={index}>
                                             <div className="form-check">
-                                                <input className="form-check-input" onChange={() => clickHandler(attribute.att_id, v)} type="checkbox"/>
+                                                <input className="form-check-input" id="form-input" onChange={() => clickHandler(attribute.att_id, v)} type="checkbox"/>
                                                 <label className="form-check-label">{v}</label>
                                             </div>
                                         </div> 

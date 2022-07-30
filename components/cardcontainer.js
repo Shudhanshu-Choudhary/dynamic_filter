@@ -46,7 +46,7 @@ export default function CardContainer({filterArray, category}) {
     },[filterArray])
 
     // filter logic are written here
-    
+
     React.useEffect(() => {
       let F_array = [...filterArray]
       let newProdList = []
@@ -61,6 +61,7 @@ export default function CardContainer({filterArray, category}) {
            temp_prodList = [...products]
         } else {
            temp_prodList = [...temp_prodList_2]
+           temp_prodList_2 = []
         }
 
         temp_prodList.map(prodObj => {
@@ -68,21 +69,21 @@ export default function CardContainer({filterArray, category}) {
             prodObj.attributes.map(attObj => {
                 if(attObj.id === filterobj.id) {
                    if(filterobj.value.includes(attObj.value) && !newProdList.includes(prodObj)){
-                        newProdList.push(prodObj)
+                      temp_prodList_2.push(prodObj)
                    }
                 }
             }) 
             
         })
         
-        console.log(newProdList);
-        setInitial(newProdList);
+        console.log(temp_prodList_2);
+        // setInitial(newProdList);
         ++i
-        temp_prodList = []
-        temp_prodList_2 = newProdList;
-        newProdList=[]
+        //temp_prodList = []
+        // temp_prodList_2 = newProdList;
+        // newProdList=[]
       })
-
+      setInitial(temp_prodList_2);
     },[filterArray])
     
 
